@@ -5,6 +5,9 @@ on:
     branches: [ main, master ]
   workflow_dispatch: {}
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -33,3 +36,14 @@ jobs:
         with:
           name: tfloc-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Rename APK for release
+        run: cp app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/tfloc-debug-${{ github.run_number }}.apk
+
+      - name: Publish GitHub Release with APK
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: tf-loc build #${{ github.run_number }}
+          body: Automated debug build from commit ${{ github.sha }}.
+          files: app/build/outputs/apk/debug/tfloc-debug-${{ github.run_number }}.apk
