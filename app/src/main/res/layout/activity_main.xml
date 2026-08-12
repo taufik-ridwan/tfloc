@@ -56,6 +56,18 @@
 
         </LinearLayout>
 
+        <!-- Required attribution for OSM map data/tiles (OSM Tile Usage Policy) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="4dp"
+            android:background="#AAFFFFFF"
+            android:padding="2dp"
+            android:text="© OpenStreetMap contributors"
+            android:textColor="#000000"
+            android:textSize="10sp" />
+
     </FrameLayout>
 
     <LinearLayout

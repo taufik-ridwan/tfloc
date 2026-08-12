@@ -21,7 +21,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.tileprovider.tilesource.XYTileSource
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.MapEventsOverlay
@@ -32,6 +32,20 @@ import org.osmdroid.views.overlay.Polygon
 private val DEFAULT_CENTER = GeoPoint(-6.2088, 106.8456)
 private const val MIN_RADIUS_M = 100
 private const val PREFS_NAME = "tfloc_prefs"
+
+// osmdroid's bundled TileSourceFactory.MAPNIK constant hardcodes plain http:// URLs, which
+// violates OSM's usage policy (HTTPS required) and gets silently blocked. Defining our own
+// source lets us pin it to https:// explicitly.
+private val OSM_HTTPS_TILE_SOURCE = XYTileSource(
+    "MapnikHttps",
+    0, 19, 256, ".png",
+    arrayOf(
+        "https://a.tile.openstreetmap.org/",
+        "https://b.tile.openstreetmap.org/",
+        "https://c.tile.openstreetmap.org/"
+    ),
+    "© OpenStreetMap contributors"
+)
 
 class MainActivity : AppCompatActivity() {
 
@@ -89,7 +103,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupMap() {
-        map.setTileSource(TileSourceFactory.MAPNIK)
+        map.setTileSource(OSM_HTTPS_TILE_SOURCE)
         map.setMultiTouchControls(true)
         map.controller.setZoom(14.0)
         map.controller.setCenter(DEFAULT_CENTER)
