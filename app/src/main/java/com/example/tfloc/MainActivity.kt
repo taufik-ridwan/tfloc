@@ -34,17 +34,20 @@ private const val MIN_RADIUS_M = 100
 private const val PREFS_NAME = "tfloc_prefs"
 
 // osmdroid's bundled TileSourceFactory.MAPNIK constant hardcodes plain http:// URLs, which
-// violates OSM's usage policy (HTTPS required) and gets silently blocked. Defining our own
-// source lets us pin it to https:// explicitly.
-private val OSM_HTTPS_TILE_SOURCE = XYTileSource(
-    "MapnikHttps",
-    0, 19, 256, ".png",
+// violates OSM's usage policy (HTTPS required). Even after pinning to https://, OSM's own
+// tile servers can still block whole IP ranges (common with mobile carrier CGNAT) regardless
+// of what the app sends. CARTO serves the same OSM-based cartography from separate
+// infrastructure (basemaps.cartocdn.com), sidestepping that block entirely.
+private val MAP_TILE_SOURCE = XYTileSource(
+    "CartoVoyager",
+    0, 20, 256, ".png",
     arrayOf(
-        "https://a.tile.openstreetmap.org/",
-        "https://b.tile.openstreetmap.org/",
-        "https://c.tile.openstreetmap.org/"
+        "https://a.basemaps.cartocdn.com/rastertiles/voyager/",
+        "https://b.basemaps.cartocdn.com/rastertiles/voyager/",
+        "https://c.basemaps.cartocdn.com/rastertiles/voyager/",
+        "https://d.basemaps.cartocdn.com/rastertiles/voyager/"
     ),
-    "© OpenStreetMap contributors"
+    "© OpenStreetMap contributors © CARTO"
 )
 
 class MainActivity : AppCompatActivity() {
@@ -103,7 +106,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupMap() {
-        map.setTileSource(OSM_HTTPS_TILE_SOURCE)
+        map.setTileSource(MAP_TILE_SOURCE)
         map.setMultiTouchControls(true)
         map.controller.setZoom(14.0)
         map.controller.setCenter(DEFAULT_CENTER)
