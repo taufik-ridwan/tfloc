@@ -55,12 +55,15 @@ class MainActivity : AppCompatActivity() {
     private var lastSearchResults: List<NominatimClient.SearchResult> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // osmdroid needs a user agent + a writable cache dir configured before use
+        // osmdroid needs a user agent + a writable cache dir configured before use.
+        // OSM's tile servers also now require a Referer header (recent tightening of
+        // their usage policy) — without it tiles come back as "Access blocked" images.
         Configuration.getInstance().load(
             applicationContext,
             getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
         )
-        Configuration.getInstance().userAgentValue = packageName
+        Configuration.getInstance().userAgentValue = "$packageName/1.0"
+        Configuration.getInstance().additionalHttpRequestProperties["Referer"] = "https://$packageName"
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
